@@ -8,7 +8,7 @@ from torch.nn import functional as F
 import sys
 import io
 
-# Fix UTF-8 encoding for Windows console
+# Fix UTF-8 encoding for Windows output console
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Hyperparameters
@@ -26,7 +26,7 @@ n_heads = 6
 
 print(device)
 
-# Download and load data
+# Download data
 os.makedirs("data", exist_ok=True)
 urllib.request.urlretrieve("https://philosophydata.com/phil_nlp.zip", "data/phil.zip")
 
@@ -131,7 +131,7 @@ class MultiHeadAttention(nn.Module):
 
 
 class FeedForward(nn.Module):
-    """ a simple linear layer followed by a non-linearity """
+    """ a simple linear layer followed by a relu """
 
     def __init__(self, n_embd):
         super().__init__()
@@ -147,7 +147,7 @@ class FeedForward(nn.Module):
 
 
 class Block(nn.Module):
-    """ Transformer block: communication followed by computation """
+    """ Transformer block: 'communication followed by computation' """
 
     def __init__(self, n_embd, n_head):
         super().__init__()
@@ -237,7 +237,11 @@ for iter in range(max_iters):
     loss.backward()
     optimizer.step()
 
+#Save the model to .pth
+torch.save(model.state_dict(), 'philo_model.pth')
+print("\nModel saved to philo_model.pth")
+
 # Generate from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print("\nGenerated text:")
-print(decode(model.generate(context, max_new_tokens=600)[0].tolist()))
+print(decode(model.generate(context, max_new_tokens=3000)[0].tolist()))
